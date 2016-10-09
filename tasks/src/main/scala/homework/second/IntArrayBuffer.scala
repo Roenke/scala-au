@@ -1,27 +1,5 @@
+package homework.second
 
-
-//Реалзуйте IntArrayBuffer с интерфейсом IntTraversable
-trait IntTraversable {
-  def isEmpty: Boolean
-
-  def size: Int
-
-  def contains(element: Int): Boolean
-
-  def head: Int
-
-  def tail: IntTraversable
-
-  def ++(traversable: IntTraversable): IntTraversable
-
-  def filter(predicate: Int => Boolean): IntTraversable
-
-  def map(function: Int => Int): IntTraversable
-
-  def flatMap(function: Int => IntTraversable): IntTraversable
-
-  def foreach(function: Int => Unit): Unit
-}
 
 class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
   private var myData = new Array[Int](capacity)
