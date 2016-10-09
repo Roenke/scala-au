@@ -60,8 +60,8 @@ class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
   override def size: Int = mySize
 
   override def contains(element: Int): Boolean = {
-    for(i <- 0 until mySize) {
-      if(myData(i) == element) {
+    for (i <- 0 until mySize) {
+      if (myData(i) == element) {
         return true
       }
     }
@@ -109,8 +109,8 @@ class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
 
   protected def ensureSize(size: Int): Unit = {
     if (myData.length < size) {
-      val newBuffer = Array[Int](size)
-      Array.copy(myData, 0, newBuffer, 0, mySize)
+      val newBuffer = new Array[Int](size)
+      Array.copy(myData, 0, newBuffer, 0, myData.length)
       myData = newBuffer
     }
   }
@@ -127,5 +127,7 @@ object IntArrayBuffer {
 
   def apply(elements: Int*): IntArrayBuffer = new IntArrayBuffer(elements.toArray)
 
-  def unapplySeq(buffer: IntArrayBuffer): Option[IntArrayBuffer] = Option.apply(buffer)
+  def unapply(buffer: IntArrayBuffer): Option[IntArrayBuffer] = Option(buffer)
+
+  def unapplySeq(buffer: IntArrayBuffer): Option[Seq[Int]] = if (buffer != null) Some(buffer.myData.toSeq) else None
 }
