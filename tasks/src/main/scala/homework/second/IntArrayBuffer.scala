@@ -12,9 +12,7 @@ class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
 
   private def this(data: Array[Int]) = {
     this(data.length)
-    for (i <- data.indices) {
-      this += data(i)
-    }
+    data foreach { x => this += x }
   }
 
   def apply(index: Int): Int = {
@@ -40,6 +38,7 @@ class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
   }
 
   def ++=(elements: IntTraversable): IntArrayBuffer = {
+    ensureSize(mySize + elements.size)
     elements foreach { x => this += x }
     this
   }
@@ -98,6 +97,7 @@ class IntArrayBuffer(capacity: Int = 10) extends IntTraversable {
   override def flatMap(function: (Int) => IntTraversable): IntArrayBuffer = {
     val result = new IntArrayBuffer()
     foreach { x => result ++= function(x) }
+
     result
   }
 
@@ -127,7 +127,9 @@ object IntArrayBuffer {
 
   def apply(elements: Int*): IntArrayBuffer = new IntArrayBuffer(elements.toArray)
 
-  def unapply(buffer: IntArrayBuffer): Option[IntArrayBuffer] = Option(buffer)
-
-  def unapplySeq(buffer: IntArrayBuffer): Option[Seq[Int]] = if (buffer != null) Some(buffer.myData.toSeq) else None
+  def unapplySeq(buffer: IntArrayBuffer): Option[Seq[Int]] =
+    if (buffer != null)
+      Some(buffer.myData.slice(0, buffer.mySize))
+    else
+      None
 }

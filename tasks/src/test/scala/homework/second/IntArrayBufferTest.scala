@@ -149,19 +149,20 @@ class IntArrayBufferTest extends FunSuite {
     assert(buf.size == 3)
   }
 
-  test("testUnapply") {
-    val buffer = new IntArrayBuffer()
-    buffer += 1
-    buffer match {
-      case IntArrayBuffer(b) => b
-    }
-  }
-
   test("testUnapplySeq") {
-    val buffer = new IntArrayBuffer()
-    buffer += 1
-    val tail = buffer match {
-      case IntArrayBuffer(x, xs) => xs
+    val buffer = IntArrayBuffer(1)
+    val fst: Int = buffer match {
+      case IntArrayBuffer(x) => x
     }
+
+    assert(fst == 1)
+
+    val b2 = IntArrayBuffer(1, 2, 3)
+
+    val snd = b2 match {
+      case IntArrayBuffer(_, y, _) => y
+    }
+
+    assert(snd == 2)
   }
 }
