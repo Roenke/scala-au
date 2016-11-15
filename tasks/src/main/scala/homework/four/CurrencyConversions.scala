@@ -23,12 +23,8 @@ object CurrencyConversions {
       convertedCurrency.to, convertedCurrency.from.countableCurrency.value, convertedCurrency.currencyDate)
     convertedValue match {
       case Some(x) => new NamedCurrency(new CountableCurrency(x), convertedCurrency.to)
-      case None => throw new Exception
+      case None => throw new RuntimeException("Currency exchange failed")
     }
-  }
-
-  implicit def toDouble(namedCurrency: NamedCurrency): Double = {
-    namedCurrency.countableCurrency.value
   }
 
   final class NamedCurrency(val countableCurrency: CountableCurrency,
