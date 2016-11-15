@@ -8,6 +8,6 @@ import org.scalatest.FunSuite
 class package$Test extends FunSuite {
   test("test simple conversion") {
     val a: BigDecimal = 1
-    val res: BigDecimal = 1.usd to rub on 12-10-11
+//    val res: BigDecimal = 1.usd to rub on 12-10-11
   }
 }
