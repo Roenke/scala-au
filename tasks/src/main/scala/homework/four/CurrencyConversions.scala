@@ -6,15 +6,20 @@ package homework.four
   */
 object CurrencyConversions {
 
+  implicit val converter = FixerCurrencyExchangerClient
+
   import scala.language.implicitConversions
 
-  final class ConvertedCurrency(val from: NamedCurrency, val to: Currency, val currencyDate: CurrencyDate = CurrencyDate.today) {
+  final class ConvertedCurrency(val from: NamedCurrency,
+                                val to: Currency,
+                                val currencyDate: CurrencyDate = CurrencyDate.today) {
     def on(currencyDate: CurrencyDate): ConvertedCurrency = new ConvertedCurrency(from, to, currencyDate)
 
   }
 
-  implicit def toNamedCurrency(convertedCurrency: ConvertedCurrency): NamedCurrency = {
-    val convertedValue = FixerCurrencyExchangerClient.exchange(convertedCurrency.from.currency,
+  implicit def toNamedCurrency(convertedCurrency: ConvertedCurrency)
+                              (implicit exchanger: CurrencyExchanger): NamedCurrency = {
+    val convertedValue = exchanger.exchange(convertedCurrency.from.currency,
       convertedCurrency.to, convertedCurrency.from.countableCurrency.value, convertedCurrency.currencyDate)
     convertedValue match {
       case Some(x) => new NamedCurrency(new CountableCurrency(x), convertedCurrency.to)
@@ -27,7 +32,7 @@ object CurrencyConversions {
   }
 
   final class NamedCurrency(val countableCurrency: CountableCurrency,
-                      val currency: Currency) {
+                            val currency: Currency) {
     def to(to: Currency): ConvertedCurrency = {
       new ConvertedCurrency(this, to)
     }
