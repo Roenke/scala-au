@@ -2,6 +2,20 @@ package five
 
 object HLists {
 
+  sealed trait Nat
+
+  case object Zero extends Nat
+
+  case class Succ[N <: Nat](prev: N) extends Nat
+
+  type Zero = Zero.type
+
+  val ZERO = Zero
+  var ONE = Succ(ZERO)
+  var TWO = Succ(ONE)
+  val THREE = Succ(TWO)
+  val FOUR = Succ(THREE)
+
   sealed trait HList
 
   case class HCons[+H, +T <: HList](head: H, tail: T) extends HList
@@ -10,52 +24,32 @@ object HLists {
 
   type HNil = HNil.type
 
-
-  trait Appendable[L <: HList, R <: HList, Result <: HList] {
-    def apply(l: L, r: R): Result
+  trait Splittable[S <: HList, N <: Nat, L <: HList, R <: HList] {
+    def apply(n: N, src: S): (L, R)
   }
 
-  object Appendable {
-    implicit def nilAppendable[R <: HList]: Appendable[HNil, R, R] = {
-      new Appendable[HNil, R, R] {
-        override def apply(l: HNil, r: R): R = r
+  object Splittable {
+    // apply (lst, 0) -> (nil, lst)
+    implicit def zeroSplittable[R <: HList]: Splittable[R, Zero, HNil, R] = {
+      new Splittable[R, Zero, HNil, R] {
+        override def apply(n: Zero, src: R): (HNil, R) = (HNil, src)
       }
     }
 
-    // L ||| R = Result
-    // (H :: L) ||| R = (H :: Result)
-
-    implicit def appendable[L <: HList, R <: HList, H, Result <: HList]
-    (implicit a: Appendable[L, R, Result]):
-    Appendable[HCons[H, L], R, HCons[H, Result]] = {
-      new Appendable[HCons[H, L], R, HCons[H, Result]] {
-        override def apply(l: HCons[H, L], r: R): HCons[H, Result] = {
-          HCons(l.head, a(l.tail, r))
+    // apply (lst, n + 1) -> (lst.head : apply(lst.tail, n).first, apply(lst.tail, n).second)
+    implicit def splittable[H, S <: HList, N <: Nat, L <: HList, R <: HList]
+    (implicit splittable: Splittable[S, N, L, R]): Splittable[HCons[H, S], Succ[N], HCons[H, L], R] = {
+      new Splittable[HCons[H, S], Succ[N], HCons[H, L], R] {
+        override def apply(n: Succ[N], src: HCons[H, S]): (HCons[H, L], R) = {
+          val (left, right) = splittable(n.prev, src.tail)
+          (HCons(src.head, left), right)
         }
       }
     }
   }
 
-  def append[L <: HList, R <: HList, Result <: HList](l: L, r: R)(
-    implicit appendable: Appendable[L, R, Result]
-  ): Result = appendable(l, r)
-
-  trait Splittable {
-    def apply[S <: HList, L <: HList, R <: HList](n: Int, src: S): (L, R)
-  }
-
-  // apply (0, src, acc) -> acc, src
-  // apply (suc n, x :: src, acc) -> apply(n, src,acc append x)
-
-  object Splittable {
-
-  }
-
-  def splitAt[S <: HList, L <: HList, R <: HList](n: Int, src: S)
-                                                 (implicit splittable: Splittable): (L, R) = splittable(n, src)
-
-  object Main extends App {
-    append(HCons("", HCons(1, HCons(false, HNil))), HCons("", HNil)).tail.head
-    append(HNil, HNil)
+  def splitAt[S <: HList, N <: Nat, L <: HList, R <: HList](n: N, src: S)
+                                                           (implicit splittable: Splittable[S, N, L, R]): (L, R) = {
+    splittable(n, src)
   }
 }
