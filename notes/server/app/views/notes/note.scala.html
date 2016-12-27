@@ -1,0 +1,7 @@
+@(note: Note)
+
+<div id="note-@note.id" class="note" onclick="notes.Application().noteClicked(@note.id, this)" >
+    <div class="header-preview">@note.header</div>
+    <div class="date">@(new java.text.SimpleDateFormat("HH:mm  dd MMM yyyy").format(note.modificationDate))</div>
+    <div class="content-preview">@note.content</div>
+</div>

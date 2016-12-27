@@ -1,0 +1,24 @@
+@()
+
+@main("Sign in") {
+    <div class="login-page">
+        <div class="form">
+            <p class="error" >Wrong login and/or password</p>
+            <form class="register-form">
+                <input type="text" placeholder="name" name="name"/>
+                <input type="password" placeholder="password" name="password"/>
+                <input type="text" placeholder="login" name="login"/>
+                <button onclick="notes.SignInJS().signup()">create</button>
+                <p class="message">Already registered? <a href="#"
+                onclick="notes.SignInJS().toggleForm()">Sign In</a></p>
+            </form>
+            <form class="login-form">
+                <input type="text" placeholder="login" name="login"/>
+                <input type="password" placeholder="password" name="password"/>
+                <button onclick="notes.SignInJS().signin()">Sign In</button>
+                <p class="message">Not registered? <a href="#"
+                onclick="notes.SignInJS().toggleForm()">Create an account</a></p>
+            </form>
+        </div>
+    </div>
+}
