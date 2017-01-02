@@ -1,0 +1,6 @@
+{
+  "name": "Notes",
+  "description": "Simple example application.",
+  "website": "localhost",
+  "success_url": "/"
+}

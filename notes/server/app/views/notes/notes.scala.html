@@ -1,0 +1,26 @@
+@import views.html.notes.note
+@(username: String, login: String, notes: Seq[Note])
+
+<div id="menu">
+    <header>
+        @user(username, login)
+    </header>
+    <div class="notes-pane">
+        <button class="button" onclick="notes.Application().newNote()">new</button>
+
+        <div class="note-list">
+        @for(n <- notes) {
+            @note(n)
+        }
+        </div>
+    </div>
+</div>
+
+<div id="editor">
+    <div class="editing-pane">
+        <div><textarea class="head-editor" placeholder="Give a name for the note" name="header" rows="2"></textarea></div>
+        <hr>
+        <div><textarea class="content-editor" placeholder="Just start typing... " name="content"></textarea></div>
+        <button class="button" onclick="notes.Application().saveCurrentNote()">Save</button>
+    </div>
+</div>
